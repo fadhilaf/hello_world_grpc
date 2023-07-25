@@ -1,0 +1,57 @@
+﻿## "option go_package = {nama_folder_package & nama_package}" di file .proto itu bakal jadi lokasi folder package di file .go ny
+sekalian nama package di golang ny jugo
+
+kalo utk lang lain "option {language}_package = {nama_folder_package & nama_package}"
+
+option ini special language feature, jadi khusus utk salah satuny bahasa golang
+
+________________________________________
+
+## "package {nama_package}" di file .go itu bakal jadi nama package utk memisahkan antara satu proto file dengan yg lain
+
+________________________________________
+
+## "message" di protocol buffer itu type definition utk request dan response function ny
+penamaan message awalnya harus huruf kapital
+
+nah kenapo di akhir tiap field ada angka =1, =2, =3, dst?
+itu utk nandain urutan field (persis kayak enum)
+jadi pas dikirim request atau nerima response,
+tidak perlu ditulis nama field ny sama persis, tinggal kita tandain dengan 1 2 3 tadi
+(jadiny lebih cepet pengiriman & tidak makan banyak data)
+
+utk tipe data list, kita bisa pake "repeated" di depan tipe data ny
+bisa "repeated string {field_name} = 1;}"
+bisa "repeated DefinedMessage {field_name} = 1;" (message yg kita buat sendiri)
+
+________________________________________
+
+## "service" di protocol buffer itu utk nandain function2 atau service yg bisa dipanggil
+yang nanti bakal dibuat abstraksi sama grpc stub
+yang seakan akan kita ngepanggil function itu dari code client itu sendiri
+
+dan di sisi server, kita bakal nge assign service yg didefinisikan di .proto itu
+pakai function yg ada di kodingan server ny.
+kayak: masukkan function "SayHello" ke service "Greeter" yg didefinisikan di .proto (addService.Greeter(SayHello))
+
+rpc {nama_service}({nama_message utk parameter}) returns ({nama_message utk response})
+
+________________________________________
+
+## file .proto harus ada di client dan server (isi sama persis)
+wajib convert file .proto ini sendiri, pake tools cli "protoc" biasany
+
+- protoc --{language}_out={output_dir} --{language}-grpc_out={output_dir} {file.proto} (golang: protoc --go_out=. --go-grpc_out=. test.proto)
+
+________________________________________
+
+protoc diinstal dari pacman :v (package protobuf)
+
+trus perlu compiler spesifik utk language ny, utk go pake "protoc-gen-go" 
+-> "go install github.com/golang/protobuf/protoc-gen-go@latest" (ini utk generate type dan populating, serializing, and retrieving)
+
+trus perlu compiler yg spesifik utk language ny jg, tapi ini utk grpc side ny pake "protoc-gen-go-grpc" 
+-> "go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest" (ini utk generate stub samo registerService ny) 
+
+trus pas outputan compile ny lah ado, kalo ado import yg blum ado, tinggal go get -u ken bae
+

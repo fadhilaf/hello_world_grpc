@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package hello;
+
+option go_package = "./hello";
+
+message HelloMessage {
+  string message = 1;
+}
+
+message HelloObject {
+  int32 id = 1;
+  string name = 2;
+}
+
+message void {}
+
+message HelloAllTypesRequest {
+  int32 id = 1;
+  string name = 2;
+  float salary = 3;
+  bool active = 4;
+
+  repeated string strings = 5;
+
+  repeated HelloObject objects = 6;
+}
+
+message HelloAllTypesResponse {
+  string message = 1;
+}
+
+service HelloService {
+  rpc Hello(void) returns (HelloMessage) {}
+  rpc HelloAllTypes(HelloAllTypesRequest) returns (HelloAllTypesResponse) {}
+}
